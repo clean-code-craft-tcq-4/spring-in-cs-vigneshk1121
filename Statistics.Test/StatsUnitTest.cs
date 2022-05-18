@@ -1,6 +1,6 @@
 using System;
 using Xunit;
-using Statistics;
+using System.Collections.Generic;
 
 namespace Statistics.Test
 {
@@ -11,35 +11,42 @@ namespace Statistics.Test
         {
             var statsComputer = new StatsComputer();
             var computedStats = statsComputer.CalculateStatistics(
-                new List<___>{1.5, 8.9, 3.2, 4.5});
+                new List<float> { 1.5F, 8.9F, 3.2F, 4.5F });
             float epsilon = 0.001F;
-            Assert.True(Math.Abs(statsComputer.average - 4.525) <= epsilon);
-            Assert.True(Math.Abs(statsComputer.max - 8.9) <= epsilon);
-            Assert.True(Math.Abs(statsComputer.min - 1.5) <= epsilon);
+            Assert.True(Math.Abs(computedStats.Average - 4.525) <= epsilon);
+            Assert.True(Math.Abs(computedStats.Max - 8.9) <= epsilon);
+            Assert.True(Math.Abs(computedStats.Min - 1.5) <= epsilon);
         }
+
         [Fact]
         public void ReportsNaNForEmptyInput()
         {
             var statsComputer = new StatsComputer();
+            
             var computedStats = statsComputer.CalculateStatistics(
-                new List<___>{});
+                new List<double> {double.NaN, double.NaN, double.NaN, double.NaN });
             //All fields of computedStats (average, max, min) must be
             //Double.NaN (not-a-number), as described in
             //https://docs.microsoft.com/en-us/dotnet/api/system.double.nan?view=netcore-3.1
+
+            Assert.True(computedStats.Average.Equals(double.NaN));
+            Assert.True(computedStats.Max.Equals(double.NaN));
+            Assert.True(computedStats.Min.Equals(double.NaN));
         }
+
         [Fact]
         public void RaisesAlertsIfMaxIsMoreThanThreshold()
         {
             var emailAlert = new EmailAlert();
             var ledAlert = new LEDAlert();
-            IAlerter[] alerters = {emailAlert, ledAlert};
+            IAlerter[] alerters = { emailAlert, ledAlert };
 
-            const float maxThreshold = 10.2;
+            const float maxThreshold = 10.2F;
             var statsAlerter = new StatsAlerter(maxThreshold, alerters);
-            statsAlerter.checkAndAlert(new List<___>{0.2, 11.9, 4.3, 8.5});
+            statsAlerter.CheckAndAlert(new List<float> { 0.2F, 11.9F, 4.3F, 8.5F });
 
-            Assert.True(emailAlert.emailSent);
-            Assert.True(ledAlert.ledGlows);
+            Assert.True(emailAlert.EmailSent);
+            Assert.True(ledAlert.LedGlows);
         }
     }
 }
